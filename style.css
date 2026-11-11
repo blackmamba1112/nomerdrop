@@ -1,0 +1,264 @@
+/* ============ ПАЛИТРА NOMERDROP ============ */
+:root{
+  --bg:#1E1E2E;          /* асфальт */
+  --bg-card:#26263A;
+  --electric:#00BFFF;    /* электрик-синий */
+  --gold:#FFD700;
+  --purple:#8A2BE2;
+  --pink:#FF1493;
+  --text:#EDEDF5;
+  --muted:#9A9AB0;
+  --r-common:#8A8A9A;
+  --r-rare:#00BFFF;
+  --r-legendary:#FFD700;
+  --r-mythic:#8A2BE2;
+  --r-exclusive:#FFD700;
+}
+/* Светлая тема Telegram — мягкая адаптация фона, номера остаются контрастными */
+body[data-theme="light"]{ --bg:#EDEDF2; --bg-card:#FFFFFF; --text:#1E1E2E; --muted:#5A5A72; }
+
+*{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; }
+body{
+  background:var(--bg);
+  /* лёгкий «гаражный» шум через радиальные градиенты */
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(0,191,255,.06), transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(255,215,0,.05), transparent 40%);
+  color:var(--text);
+  font-family:Inter,'Segoe UI',Roboto,sans-serif;
+  overflow:hidden;
+  user-select:none;
+}
+
+/* ---------- SPLASH ---------- */
+#splash{
+  position:fixed; inset:0; z-index:100; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:18px;
+  background:var(--bg); animation:splashOut .5s ease 1.2s forwards;
+}
+@keyframes splashOut{ to{ opacity:0; visibility:hidden; } }
+.splash-hint{ color:var(--muted); font-size:13px; letter-spacing:2px; text-transform:uppercase; }
+.logo-grz{ width:min(300px,70vw); }
+
+/* ---------- КАРКАС ---------- */
+#app{ display:flex; flex-direction:column; height:100vh; height:100dvh; }
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px calc(12px + env(safe-area-inset-top)) ; padding-top:calc(12px + env(safe-area-inset-top));
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.header-logo{ cursor:pointer; filter:drop-shadow(0 0 8px rgba(0,191,255,.4)); }
+.coins{ font-size:18px; font-weight:700; color:var(--gold); display:flex; align-items:center; gap:6px;
+  text-shadow:0 0 10px rgba(255,215,0,.5); }
+main{ flex:1; overflow-y:auto; padding:16px; padding-bottom:24px; }
+.screen{ display:none; animation:fadeIn .25s ease; }
+.screen.active{ display:block; }
+@keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+
+/* ---------- ТАБ-БАР ---------- */
+.tabbar{
+  display:flex; border-top:1px solid rgba(255,255,255,.08);
+  padding-bottom:env(safe-area-inset-bottom); background:rgba(20,20,32,.9); backdrop-filter:blur(8px);
+}
+.tab{
+  flex:1; background:none; border:0; color:var(--muted); padding:10px 4px;
+  font-size:11px; font-family:inherit; display:flex; flex-direction:column; gap:3px; align-items:center;
+  transition:color .2s;
+}
+.tab span{ font-size:20px; }
+.tab.active{ color:var(--electric); text-shadow:0 0 8px rgba(0,191,255,.6); }
+
+/* ---------- ГЛАВНАЯ ---------- */
+.hero{ text-align:center; padding:26px 0 18px; }
+.hero-title{ font-size:34px; font-weight:800; line-height:1.15; }
+.grad-text{
+  background:linear-gradient(90deg,var(--electric),var(--purple));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.hero-sub{ color:var(--muted); margin-top:8px; font-size:14px; }
+.btn-primary{
+  display:block; width:100%; padding:18px; border:0; border-radius:16px;
+  font-family:inherit; font-size:17px; font-weight:800; letter-spacing:.5px; color:#04121c;
+  background:linear-gradient(135deg,var(--electric),#0099cc);
+  box-shadow:0 0 24px rgba(0,191,255,.45), inset 0 1px 0 rgba(255,255,255,.35);
+  cursor:pointer; transition:transform .15s, box-shadow .15s;
+}
+.btn-primary:active{ transform:scale(.97); }
+.btn-primary:disabled{ filter:grayscale(1); opacity:.5; cursor:default; }
+.btn-secondary{
+  background:none; border:1px solid var(--electric); color:var(--electric);
+  padding:12px 22px; border-radius:12px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer;
+}
+.bonus-card{
+  margin-top:14px; background:var(--bg-card); border-radius:16px; padding:16px;
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  border:1px solid rgba(255,215,0,.25);
+}
+.bonus-title{ font-size:13px; color:var(--muted); }
+.bonus-info{ margin-top:4px; color:var(--gold); font-weight:700; }
+.quick-stats{ margin-top:14px; display:flex; gap:10px; }
+.quick-stats div{
+  flex:1; background:var(--bg-card); border-radius:12px; padding:12px; text-align:center; font-size:12px; color:var(--muted);
+}
+.quick-stats b{ display:block; font-size:18px; color:var(--text); margin-bottom:2px; }
+
+/* ---------- АВТОМОБИЛЬНЫЙ НОМЕР (карточка ГРЗ) ---------- */
+.plate{
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  background:#F5F5F0; border:3px solid #111; border-radius:6px;
+  padding:6px 8px; position:relative; overflow:hidden;
+}
+.plate-line{
+  font-family:'Arial Narrow','Roboto Condensed',sans-serif; font-weight:bold;
+  color:#111; letter-spacing:1px; white-space:nowrap;
+}
+.plate-region{
+  font-family:'Arial Narrow','Roboto Condensed',sans-serif; font-weight:bold; color:#111;
+  border:2.5px solid #111; border-radius:4px; padding:1px 4px; white-space:nowrap;
+}
+.big-plate .plate-line{ font-size:34px; } .big-plate .plate-region{ font-size:24px; }
+.md-plate .plate-line{ font-size:22px; } .md-plate .plate-region{ font-size:16px; }
+.sm-plate .plate-line{ font-size:13px; } .sm-plate .plate-region{ font-size:10px; border-width:2px; }
+
+/* Рамки карточек по редкости */
+.card{ position:relative; border-radius:14px; padding:10px; background:var(--bg-card); border:2px solid var(--r-common); }
+.card .plate{ box-shadow:inset 0 0 6px rgba(0,0,0,.15); }
+.card.rare{ border-color:var(--r-rare); box-shadow:0 0 14px rgba(0,191,255,.35); }
+.card.legendary{ border-color:var(--r-legendary); box-shadow:0 0 16px rgba(255,215,0,.45); }
+.card.mythic{ border-color:var(--r-mythic); box-shadow:0 0 20px rgba(138,43,226,.55); animation:mythPulse 2s ease-in-out infinite; }
+@keyframes mythPulse{ 50%{ box-shadow:0 0 30px rgba(255,20,147,.7); } }
+.card.exclusive{
+  border-color:var(--gold);
+  background:linear-gradient(135deg,#0d0d12,#1c1c2b);
+  box-shadow:0 0 24px rgba(255,215,0,.5), inset 0 0 14px rgba(255,215,0,.15);
+  animation:exShine 3s linear infinite;
+}
+/* Эксклюзивный чёрный знак с золотом */
+.card.exclusive .plate{ background:#111; }
+.card.exclusive .plate-line, .card.exclusive .plate-region{ color:var(--gold); }
+.card.exclusive .plate-region{ border-color:var(--gold); }
+.card.exclusive .plate{ border-color:var(--gold); }
+@keyframes exShine{ 0%,100%{ filter:brightness(1);} 50%{ filter:brightness(1.25);} }
+.badge-x2{
+  position:absolute; top:-8px; right:-8px; background:var(--pink); color:#fff;
+  font-size:10px; font-weight:800; padding:3px 7px; border-radius:10px; z-index:2;
+}
+.rarity-name{ font-size:11px; margin-top:6px; text-align:center; text-transform:uppercase; letter-spacing:1px; }
+
+/* Частицы мифических/эксклюзивных */
+.particle{
+  position:absolute; width:5px; height:5px; border-radius:50%; pointer-events:none;
+  animation:partFly 1.6s ease-out infinite;
+}
+@keyframes partFly{
+  0%{ transform:translate(0,0) scale(1); opacity:1; }
+  100%{ transform:translate(var(--dx),-70px) scale(.2); opacity:0; }
+}
+
+/* ---------- ОВЕРЛЕЙ ВЫПАДЕНИЯ ---------- */
+#rollOverlay{
+  position:fixed; inset:0; z-index:50; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:20px;
+  background:rgba(10,10,18,.92); backdrop-filter:blur(6px);
+}
+#flash{ position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; }
+#flash.on{ animation:flashAnim .35s ease; }
+@keyframes flashAnim{ 0%{opacity:0;} 30%{opacity:1;} 100%{opacity:0;} }
+#mysteryBox{ animation:boxShake .6s ease; }
+@keyframes boxShake{
+  0%,100%{ transform:rotate(0); } 20%{ transform:rotate(-8deg) scale(1.05); }
+  40%{ transform:rotate(8deg); } 60%{ transform:rotate(-6deg) scale(1.08); }
+  80%{ transform:rotate(5deg); }
+}
+.box-hint{ text-align:center; color:var(--muted); margin-top:10px; letter-spacing:2px; text-transform:uppercase; font-size:12px; }
+/* Переворот карточки */
+#rollScene .flip-scene{ perspective:900px; }
+#rollCard{ animation:cardFlip .9s ease; transform-style:preserve-3d; }
+@keyframes cardFlip{
+  0%{ transform:rotateY(90deg) scale(.6); opacity:0; }
+  60%{ transform:rotateY(-15deg) scale(1.06); opacity:1; }
+  100%{ transform:rotateY(0) scale(1); }
+}
+#rollMeta{ text-align:center; }
+#rollMeta .rarity-title{ font-size:16px; font-weight:800; text-transform:uppercase; letter-spacing:2px; margin-top:10px; }
+#rollMeta .lore{ max-width:280px; color:var(--muted); font-size:13px; margin-top:8px; font-style:italic; }
+#rollMeta .value{ color:var(--gold); font-weight:700; margin-top:6px; }
+
+/* ---------- КОЛЛЕКЦИЯ ---------- */
+.screen-head h2{ font-size:22px; margin-bottom:6px; }
+.coll-stats{ color:var(--muted); font-size:13px; margin-bottom:4px; }
+.chips{ display:flex; gap:8px; overflow-x:auto; padding:10px 0; }
+.chip{
+  flex-shrink:0; background:var(--bg-card); border:1px solid rgba(255,255,255,.1); color:var(--muted);
+  padding:8px 14px; border-radius:20px; font-family:inherit; font-size:12px; cursor:pointer; transition:.2s;
+}
+.chip.active{ border-color:var(--electric); color:var(--electric); box-shadow:0 0 10px rgba(0,191,255,.3); }
+.coll-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; }
+.coll-grid .card{ display:flex; flex-direction:column; align-items:center; padding:14px 6px; }
+.coll-grid .plate{ width:100%; }
+.empty-msg{ color:var(--muted); text-align:center; padding:40px 20px; }
+
+/* ---------- ТОП / ШАНСЫ ---------- */
+.stub-card{ background:var(--bg-card); border-radius:14px; padding:14px; color:var(--muted); font-size:13px; margin-bottom:14px; border:1px dashed rgba(255,255,255,.15); }
+.stat-row{ background:var(--bg-card); border-radius:12px; padding:12px 14px; margin-bottom:8px; display:flex; justify-content:space-between; }
+.bar{ height:6px; border-radius:3px; background:var(--r-common); }
+.odds-table{ width:100%; border-collapse:collapse; }
+.odds-table th,.odds-table td{ padding:10px 8px; text-align:left; font-size:13px; border-bottom:1px solid rgba(255,255,255,.08); }
+.odds-table th{ color:var(--muted); font-size:11px; text-transform:uppercase; }
+.odds-plate{ transform:scale(.85); transform-origin:left center; }
+
+/* ---------- МОДАЛКИ ---------- */
+#adminOverlay,#brandOverlay{
+  position:fixed; inset:0; z-index:60; display:flex; align-items:flex-end; justify-content:center;
+  background:rgba(0,0,0,.7); animation:fadeIn .2s;
+}
+.modal{
+  background:var(--bg-card); border-radius:20px 20px 0 0; width:100%; max-height:86vh; overflow-y:auto;
+  padding:20px; position:relative;
+}
+.modal-wide{ max-width:720px; }
+.modal-close{ position:absolute; top:12px; right:14px; background:none; border:0; color:var(--muted); font-size:20px; cursor:pointer; }
+.modal h3{ margin:14px 0 10px; font-size:16px; color:var(--electric); }
+.modal label{ display:block; font-size:13px; color:var(--muted); margin:8px 0; }
+.modal input{
+  width:100%; background:var(--bg); border:1px solid rgba(255,255,255,.15); color:var(--text);
+  border-radius:10px; padding:10px 12px; font-family:inherit; font-size:14px; margin-top:4px;
+}
+.err{ color:var(--pink); font-size:12px; min-height:16px; }
+.sum-check{ font-size:12px; margin:6px 0 10px; }
+.sum-check.ok{ color:#4CAF50; } .sum-check.bad{ color:var(--pink); }
+.brand-row{ display:flex; gap:14px; flex-wrap:wrap; }
+.brand-item{ flex:1; min-width:200px; background:var(--bg); border-radius:12px; padding:12px; }
+.brand-item h4{ font-size:13px; margin-bottom:8px; color:var(--gold); }
+.brand-item p{ font-size:11px; color:var(--muted); line-height:1.5; margin-top:6px; }
+
+/* ---------- БАННЕРЫ (демо-вёрстка) ---------- */
+.banner{ position:relative; border-radius:16px; overflow:hidden; margin:12px 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(0,191,255,.25), transparent 30%),
+    radial-gradient(circle at 80% 75%, rgba(255,215,0,.15), transparent 30%),
+    linear-gradient(160deg,#14141F,#2A2A44);
+}
+.banner-1{ aspect-ratio:1/1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; }
+.gold-plate{ border-color:var(--gold); background:#111; box-shadow:0 0 30px rgba(255,215,0,.55); }
+.gold-plate .plate-line,.gold-plate .plate-region{ color:var(--gold); border-color:var(--gold); }
+.gold-plate .plate-region{ border-color:var(--gold); }
+.banner-tag{ font-size:18px; font-weight:800; letter-spacing:1px; }
+.banner-logo{ position:absolute; top:14px; right:16px; font-weight:900; color:var(--electric); text-shadow:0 0 10px rgba(0,191,255,.7); }
+.btn-cta{
+  background:var(--electric); color:#04121c; border:0; border-radius:26px;
+  padding:12px 32px; font-weight:800; font-family:inherit; font-size:15px; cursor:pointer;
+  box-shadow:0 0 18px rgba(0,191,255,.5);
+}
+.banner2-cards{ display:flex; gap:8px; flex-wrap:wrap; padding:14px; max-width:55%; }
+.banner2-text{ position:absolute; right:20px; top:50%; transform:translateY(-50%); font-size:15px; font-weight:700; text-align:right; }
+.banner2-text .btn-cta{ margin-top:12px; }
+.banner-logo-corner{ position:absolute; top:14px; left:16px; font-weight:900; color:var(--gold); text-shadow:0 0 10px rgba(255,215,0,.6); }
+.banner-note{ font-size:11px; color:var(--muted); margin-bottom:8px; }
+.spark{ position:absolute; width:4px; height:4px; border-radius:50%; background:var(--gold); box-shadow:0 0 8px var(--gold); animation:partFly 1.8s ease-out infinite; }
+.spark.s1{ left:20%; top:70%; --dx:-30px; }
+.spark.s2{ right:18%; top:30%; --dx:40px; animation-delay:.5s; }
+.spark.s3{ left:60%; top:20%; --dx:-20px; animation-delay:1s; }
+
+@media (min-width:480px){ .coll-grid{ grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); } }

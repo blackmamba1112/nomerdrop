@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <!-- viewport-fit=cover — корректно под скруглённые углы iPhone -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="color-scheme" content="dark light">
+  <title>NomerDrop — выбей свой номер</title>
+  <!-- Официальный SDK Telegram Mini Apps -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ================= SPLASH ================= -->
+<div id="splash">
+  <!-- ЛОГОТИП ВАРИАНТ 2 «Строгий ГРЗ» — используется на сплэше и в шапке -->
+  <svg class="logo-grz" viewBox="0 0 300 120" aria-label="NomerDrop">
+    <defs>
+      <filter id="plateShadow" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#00BFFF" flood-opacity="0.35"/>
+      </filter>
+    </defs>
+    <g filter="url(#plateShadow)">
+      <rect x="10" y="14" width="280" height="92" rx="10" fill="#F5F5F0" stroke="#111" stroke-width="7"/>
+    </g>
+    <text x="34" y="52" font-family="Arial Narrow, Roboto Condensed, sans-serif"
+          font-size="30" font-weight="bold" letter-spacing="4" fill="#111">NOMER</text>
+    <text x="34" y="88" font-family="Arial Narrow, Roboto Condensed, sans-serif"
+          font-size="30" font-weight="bold" letter-spacing="4" fill="#111">DROP</text>
+    <g>
+      <rect x="216" y="28" width="56" height="64" rx="6" fill="none" stroke="#111" stroke-width="5"/>
+      <text x="244" y="70" text-anchor="middle" font-family="Arial Narrow, Roboto Condensed, sans-serif"
+            font-size="26" font-weight="bold" fill="#111">777</text>
+    </g>
+  </svg>
+  <div class="splash-hint">загружаем гараж…</div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app" hidden>
+
+  <header class="topbar">
+    <!-- Тап по логотипу 5 раз — вход в админку -->
+    <div id="headerLogo" class="header-logo" title="NomerDrop">
+      <svg viewBox="0 0 300 120" width="96" height="38" aria-hidden="true">
+        <rect x="10" y="14" width="280" height="92" rx="10" fill="#F5F5F0" stroke="#111" stroke-width="7"/>
+        <text x="34" y="52" font-family="Arial Narrow, Roboto Condensed, sans-serif" font-size="30" font-weight="bold" letter-spacing="4" fill="#111">NOMER</text>
+        <text x="34" y="88" font-family="Arial Narrow, Roboto Condensed, sans-serif" font-size="30" font-weight="bold" letter-spacing="4" fill="#111">DROP</text>
+        <rect x="216" y="28" width="56" height="64" rx="6" fill="none" stroke="#111" stroke-width="5"/>
+        <text x="244" y="70" text-anchor="middle" font-family="Arial Narrow, Roboto Condensed, sans-serif" font-size="26" font-weight="bold" fill="#111">777</text>
+      </svg>
+    </div>
+    <div class="coins">
+      <span class="coin-icon">◉</span><span id="coinBalance">500</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ---------- ГЛАВНАЯ ---------- -->
+    <section id="screen-home" class="screen active">
+      <div class="hero">
+        <div class="hero-title">Выбей свой<br><span class="grad-text">редкий номер</span></div>
+        <div class="hero-sub">Строй коллекцию ГРЗ. От обычных до эксклюзива.</div>
+      </div>
+      <button id="btnRoll" class="btn-primary">ВЫБИТЬ НОМЕР — 50 ◉</button>
+      <div class="bonus-card">
+        <div class="bonus-title">Ежедневный бонус</div>
+        <div class="bonus-info"><span id="bonusTimer">готово</span> <b>+100 ◉</b></div>
+        <button id="btnBonus" class="btn-secondary">Забрать</button>
+      </div>
+      <div class="quick-stats" id="quickStats"></div>
+    </section>
+
+    <!-- ---------- КОЛЛЕКЦИЯ ---------- -->
+    <section id="screen-collection" class="screen">
+      <div class="screen-head">
+        <h2>Коллекция</h2>
+        <div id="collStats" class="coll-stats"></div>
+      </div>
+      <div id="collFilter" class="chips">
+        <button class="chip active" data-r="all">Все</button>
+        <button class="chip" data-r="common">Обычные</button>
+        <button class="chip" data-r="rare">Редкие</button>
+        <button class="chip" data-r="legendary">Легендарные</button>
+        <button class="chip" data-r="mythic">Мифические</button>
+        <button class="chip" data-r="exclusive">Эксклюзив</button>
+      </div>
+      <div id="collGrid" class="coll-grid"></div>
+    </section>
+
+    <!-- ---------- ТОП ---------- -->
+    <section id="screen-top" class="screen">
+      <div class="screen-head"><h2>Топ</h2></div>
+      <div class="stub-card">
+        Глобальный рейтинг появится после подключения серверной части.
+        А пока — твоя локальная статистика:
+      </div>
+      <div id="topContent"></div>
+    </section>
+
+    <!-- ---------- ШАНСЫ ---------- -->
+    <section id="screen-odds" class="screen">
+      <div class="screen-head"><h2>Шансы</h2></div>
+      <table class="odds-table" id="oddsTable"></table>
+    </section>
+  </main>
+
+  <!-- ТАБ-БАР -->
+  <nav class="tabbar">
+    <button class="tab active" data-screen="screen-home"><span>🏠</span>Главная</button>
+    <button class="tab" data-screen="screen-collection"><span>🗂</span>Коллекция</button>
+    <button class="tab" data-screen="screen-top"><span>🏆</span>Топ</button>
+    <button class="tab" data-screen="screen-odds"><span>🎲</span>Шансы</button>
+  </nav>
+</div>
+
+<!-- ================= ОВЕРЛЕЙ ВЫПАДЕНИЯ ================= -->
+<div id="rollOverlay" hidden>
+  <div id="flash"></div>
+  <div id="mysteryBox">
+    <svg viewBox="0 0 120 100" width="140">
+      <rect x="15" y="25" width="90" height="60" rx="8" fill="#2A2A3E" stroke="#00BFFF" stroke-width="3"/>
+      <text x="60" y="52" text-anchor="middle" fill="#00BFFF" font-size="14" font-family="Arial Narrow, sans-serif" letter-spacing="2">А000АА</text>
+      <text x="60" y="72" text-anchor="middle" fill="#FFD700" font-size="12" font-family="Arial Narrow, sans-serif">???</text>
+    </svg>
+    <div class="box-hint">выбиваем…</div>
+  </div>
+  <div id="rollScene" hidden>
+    <div id="rollCard"></div>
+    <div id="rollMeta"></div>
+    <button id="rollClose" class="btn-secondary">Забрать</button>
+  </div>
+</div>
+
+<!-- ================= АДМИН-МОДАЛКА ================= -->
+<div id="adminOverlay" hidden>
+  <div class="modal">
+    <button class="modal-close" data-close>✕</button>
+    <div id="adminLogin">
+      <h3>Вход администратора</h3>
+      <input type="password" id="adminPass" placeholder="Пароль" inputmode="numeric">
+      <div id="adminErr" class="err"></div>
+      <button id="adminEnter" class="btn-primary">Войти</button>
+    </div>
+    <div id="adminPanel" hidden>
+      <h3>Статистика</h3>
+      <div id="adminStats"></div>
+      <h3>Настройки</h3>
+      <div id="adminWeights"></div>
+      <div class="sum-check" id="weightSum"></div>
+      <label>Цена выбивания: <input type="number" id="admPrice"></label>
+      <label>Ежедневный бонус: <input type="number" id="admBonus"></label>
+      <button id="admSaveCfg" class="btn-primary">Сохранить</button>
+      <h3>Добавить эксклюзив</h3>
+      <input id="exNum" placeholder="Номер, напр. О000ОО 99">
+      <input id="exName" placeholder="Название">
+      <input id="exLore" placeholder="Лор">
+      <input id="exVal" type="number" placeholder="Ценность, монет">
+      <button id="exAdd" class="btn-secondary">Добавить</button>
+      <button id="brandkitBtn" class="btn-secondary">Показать бренд-кит</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= БРЕНД-КИТ (логотипы и баннеры) ================= -->
+<div id="brandOverlay" hidden>
+  <div class="modal modal-wide">
+    <button class="modal-close" data-close="brandOverlay">✕</button>
+    <h3>Логотипы</h3>
+    <div class="brand-row">
+      <div class="brand-item">
+        <h4>1. Неон и металл</h4>
+        <!-- ЛОГОТИП ВАРИАНТ 1 -->
+        <svg class="logo-v1" viewBox="0 0 360 140">
+          <defs>
+            <filter id="neonGlow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="4" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <text x="180" y="70" text-anchor="middle" filter="url(#neonGlow)"
+                font-family="Arial, sans-serif" font-weight="900" font-size="46"
+                fill="none" stroke="#00BFFF" stroke-width="1.5" letter-spacing="1">NomerDrop</text>
+          <text x="180" y="70" text-anchor="middle"
+                font-family="Arial, sans-serif" font-weight="900" font-size="46"
+                fill="none" stroke="#8A2BE2" stroke-width="1" opacity="0.8" letter-spacing="1">NomerDrop</text>
+          <!-- хромированная рамка номера -->
+          <rect x="30" y="30" width="300" height="58" rx="8" fill="none"
+                stroke="url(#chrome)" stroke-width="3" opacity="0.7"/>
+          <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#e8e8ee"/><stop offset="0.5" stop-color="#7a7a8c"/><stop offset="1" stop-color="#e8e8ee"/>
+          </linearGradient>
+          <!-- молот -->
+          <g transform="translate(168,98)">
+            <rect x="0" y="8" width="6" height="26" rx="2" fill="#FFD700"/>
+            <rect x="-8" y="0" width="22" height="10" rx="3" fill="#FFD700"/>
+          </g>
+        </svg>
+        <p>Неоновая вывеска: контур букв синий + фиолетовый, хром-рамка номера, золотой молот снизу. Палитра: #00BFFF, #8A2BE2, #FFD700. Для шапки и промо; иконка — только молот на тёмном фоне. Тёмная тема — как есть; светлая — убрать свечение, тёмные буквы на белом.</p>
+      </div>
+      <div class="brand-item">
+        <h4>2. Строгий ГРЗ</h4>
+        <svg class="logo-v2" viewBox="0 0 300 120">
+          <rect x="10" y="14" width="280" height="92" rx="10" fill="#F5F5F0" stroke="#111" stroke-width="7"/>
+          <text x="34" y="52" font-family="Arial Narrow, Roboto Condensed, sans-serif" font-size="30" font-weight="bold" letter-spacing="4" fill="#111">NOMER</text>
+          <text x="34" y="88" font-family="Arial Narrow, Roboto Condensed, sans-serif" font-size="30" font-weight="bold" letter-spacing="4" fill="#111">DROP</text>
+          <rect x="216" y="28" width="56" height="64" rx="6" fill="none" stroke="#111" stroke-width="5"/>
+          <text x="244" y="70" text-anchor="middle" font-family="Arial Narrow, Roboto Condensed, sans-serif" font-size="26" font-weight="bold" fill="#111">777</text>
+        </svg>
+        <p>Сам номер как логотип: белое поле, чёрная рамка, «Nomer/Drop» и код 777. Палитра: #F5F5F0, #111, #00BFFF-подсветка. Основной логотип шапки и сплэша; иконка — уменьшенный номер с одним словом. Тёмная тема — синяя подсветка рамки; светлая — без изменений, номер и так «светлый».</p>
+      </div>
+      <div class="brand-item">
+        <h4>3. Динамика и скорость</h4>
+        <svg class="logo-v3" viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="70" fill="#14141F" stroke="#00BFFF" stroke-width="5"/>
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#FFD700" stroke-width="2" opacity="0.6"/>
+          <!-- силуэт летящего номера -->
+          <g transform="rotate(-12 80 80)">
+            <rect x="34" y="60" width="76" height="40" rx="6" fill="#F5F5F0" stroke="#111" stroke-width="3"/>
+            <text x="72" y="86" text-anchor="middle" font-family="Arial Narrow, sans-serif" font-size="18" font-weight="bold" fill="#111">ND</text>
+          </g>
+          <!-- искры -->
+          <g stroke="#FFD700" stroke-width="3" stroke-linecap="round">
+            <line x1="18" y1="38" x2="30" y2="44"/><line x1="130" y1="34" x2="122" y2="42"/>
+            <line x1="14" y1="120" x2="26" y2="114"/><line x1="134" y1="126" x2="124" y2="118"/>
+          </g>
+          <text x="80" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#00BFFF" letter-spacing="2">NOMERDROP</text>
+        </svg>
+        <p>Круглая эмблема «ND» с летящим номером и искрами. Чёрный #14141F, синий #00BFFF, золото #FFD700. Идеальна для аватара/иконки 64×64. Тёмная — как есть; светлая — белый круг вместо чёрного.</p>
+      </div>
+    </div>
+    <h3>Баннеры</h3>
+    <!-- БАННЕР 1: 1080×1080 -->
+    <div class="banner banner-1">
+      <div class="banner-plate gold-plate big-plate"><span class="plate-line">О000ОО</span><span class="plate-region">777</span></div>
+      <div class="banner-tag">Выбей свой редкий номер</div>
+      <button class="btn-cta">Играть</button>
+      <span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span>
+      <div class="banner-logo">NomerDrop</div>
+    </div>
+    <p class="banner-note">Баннер 1 (1080×1080): центральный золотой номер с неоном, bokeh-фон трассы через CSS-градиенты и размытые пятна, искры-частицы, CTA «Играть» / «Открыть гараж» / «Выбить номер». Шрифты: Inter Bold для тега, узкий конденсед для номера.</p>
+    <!-- БАННЕР 2: 1920×640 -->
+    <div class="banner banner-2">
+      <div class="banner-logo-corner">NomerDrop</div>
+      <div class="banner2-cards" id="banner2Cards"></div>
+      <div class="banner2-text">
+        Выбивай номера, собирай коллекцию,<br>побеждай в топе
+        <button class="btn-cta">Открыть в Telegram</button>
+      </div>
+    </div>
+    <p class="banner-note">Баннер 2 (1920×640): сетка карточек разных редкостей слева, текст справа, логотип в углу, тёмный градиент поверх ночной трассы. CTA-варианты: «Открыть в Telegram», «Поехали», «Забрать первый номер».</p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
